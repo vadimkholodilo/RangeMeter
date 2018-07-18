@@ -30,7 +30,7 @@ unsigned char SYM[47];
 // крутая библиотека сонара
 #include <NewPing.h>
 NewPing sonar(TRIG, ECHO, 400);
-
+int command = 0; // Здесь будет сохранена комманда, полученная из последовательного порта
 float dist_3[3] = {0.0, 0.0, 0.0};   // массив для хранения трёх последних измерений
 float middle, dist, dist_filtered;
 float k;
@@ -71,9 +71,14 @@ void loop() {
     else k = 0.1;                                           // если маленькое - плавный коэффициент
 
     dist_filtered = dist * k + dist_filtered * (1 - k);     // фильтр "бегущее среднее"
+if (Serial.available() > 0) {
+        command = Serial.parseInt();
+        if (command == 1) Serial.println(dist_filtered);
+		}
 
     disp.clear();                                           // очистить дисплей
     disp.float_dot(dist_filtered, 1);                       // вывести
+    
     sensTimer = millis();                                   // сбросить таймер
   }
 
